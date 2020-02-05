@@ -1,6 +1,7 @@
 package model
 
 type Device struct {
-	MacAddress string
-	Traffic    uint64
+	MacAddress      string
+	DownloadTraffic uint64
+	UploadTraffic   uint64
 }

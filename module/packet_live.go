@@ -49,8 +49,8 @@ func (p *PacketLive) Live(device string) {
 			appLength := p.getPacketSize(packet)
 			src := ep.SrcMAC.String()
 			dst := ep.DstMAC.String()
-			p.addTraffic(src, appLength)
-			p.addTraffic(dst, appLength)
+			p.addTraffic(src, appLength, true)
+			p.addTraffic(dst, appLength, false)
 		}
 	}
 }
@@ -65,15 +65,29 @@ func (p *PacketLive) GetDevices() []model.Device {
 	return devices
 }
 
-func (p *PacketLive) addTraffic(mac string, appLength uint64) {
+func (p *PacketLive) addTraffic(mac string, appLength uint64, isUpload bool) {
 	if _device, ok := p.devices.Load(mac); ok {
 		device := _device.(model.Device)
-		device.Traffic += appLength
+		if isUpload {
+			device.UploadTraffic += appLength
+		} else {
+			device.DownloadTraffic += appLength
+		}
 		p.devices.Store(mac, device)
 	} else {
+		var upload uint64 = 0
+		var download uint64 = 0
+
+		if isUpload {
+			upload = appLength
+		} else {
+			download = appLength
+		}
+
 		p.devices.Store(mac, model.Device{
-			MacAddress: mac,
-			Traffic:    appLength,
+			MacAddress:      mac,
+			UploadTraffic:   upload,
+			DownloadTraffic: download,
 		})
 	}
 }

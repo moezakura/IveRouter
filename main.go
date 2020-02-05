@@ -29,9 +29,14 @@ func main() {
 		sort.Sort(sort.Reverse(devices))
 		fmt.Println("==== DEVICE TRAFFIC ====")
 		for _, d := range devices {
-			traffic := d.Traffic
-			trafficFormat := util.ToDataCast(float64(traffic))
-			fmt.Printf("%s : %s (%d b)\n", d.MacAddress, trafficFormat, traffic)
+			uploadTraffic := d.UploadTraffic
+			downloadTraffic := d.DownloadTraffic
+			upload := util.ToDataCast(float64(uploadTraffic))
+			download := util.ToDataCast(float64(downloadTraffic))
+			fmt.Printf("%s : ", d.MacAddress)
+			fmt.Printf("↑ %12s (% 15d b)", upload, uploadTraffic)
+			fmt.Printf("↓ %12s (% 15d b)", download, downloadTraffic)
+			fmt.Printf("\n")
 		}
 	}
 }

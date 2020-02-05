@@ -16,7 +16,7 @@ func (d Devices) Swap(i, j int) {
 }
 
 func (d Devices) Less(i, j int) bool {
-	return d[i].Traffic < d[j].Traffic
+	return d[i].UploadTraffic+d[i].DownloadTraffic < d[j].UploadTraffic+d[j].DownloadTraffic
 }
 
 func (d Devices) Encode() (data []byte, err error) {
