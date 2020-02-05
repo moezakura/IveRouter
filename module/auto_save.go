@@ -50,7 +50,9 @@ func (a *AutoSave) do() {
 	}
 	defer func() {
 		err := file.Close()
-		log.Printf("devices data close file error: %+v\n", err)
+		if err != nil {
+			log.Printf("devices data close file error: %+v\n", err)
+		}
 	}()
 
 	_, err = file.Write(data)

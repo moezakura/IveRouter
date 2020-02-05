@@ -28,14 +28,21 @@ func main() {
 		var devices model.Devices = pl.GetDevices()
 		sort.Sort(sort.Reverse(devices))
 		fmt.Println("==== DEVICE TRAFFIC ====")
+
+		fmt.Printf("%17s : ", "MAC ADDRESS")
+		fmt.Printf("%32s   ", "DOWNLOAD")
+		fmt.Printf("%32s", "UPLOAD")
+		fmt.Println()
+
 		for _, d := range devices {
 			uploadTraffic := d.UploadTraffic
 			downloadTraffic := d.DownloadTraffic
 			upload := util.ToDataCast(float64(uploadTraffic))
 			download := util.ToDataCast(float64(downloadTraffic))
 			fmt.Printf("%s : ", d.MacAddress)
-			fmt.Printf("↑ %12s (% 15d b)", upload, uploadTraffic)
-			fmt.Printf("↓ %12s (% 15d b)", download, downloadTraffic)
+			fmt.Printf("↑ %10s (% 15d b)", upload, uploadTraffic)
+			fmt.Printf("   ")
+			fmt.Printf("↓ %10s (% 15d b)", download, downloadTraffic)
 			fmt.Printf("\n")
 		}
 	}
