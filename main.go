@@ -4,13 +4,17 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/moezakura/IveRouter/model"
+	"github.com/moezakura/IveRouter/module"
 	"os"
 	"sort"
 )
 
 func main() {
-	pl := NewPacketLive()
+	pl := module.NewPacketLive()
 	go pl.Live("eth0")
+
+	as := module.NewAutoSave(pl)
+	as.Run()
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
