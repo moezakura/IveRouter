@@ -12,7 +12,12 @@ type DailyReset struct {
 }
 
 func NewDailyReset(packetLive *PacketLive) *DailyReset {
-	return &DailyReset{packetLive: packetLive}
+	now := time.Now()
+	today := now.Format("2006-01-02")
+	return &DailyReset{
+		packetLive: packetLive,
+		lastDate:   today,
+	}
 }
 
 func (d *DailyReset) Run() {
