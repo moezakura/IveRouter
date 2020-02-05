@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	AUTO_SAVE_FILE = "devices_%s.dat"
+	AUTO_SAVE_FILE = "data/devices_%s.dat"
 )
 
 type AutoSave struct {

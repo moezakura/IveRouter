@@ -5,12 +5,19 @@ import (
 	"fmt"
 	"github.com/moezakura/IveRouter/model"
 	"github.com/moezakura/IveRouter/module"
+	"github.com/moezakura/IveRouter/util"
 	"os"
 	"sort"
 )
 
 func main() {
-	pl := module.NewPacketLive()
+	dr := module.NewDevicesRestore()
+	devices, err := dr.Restore()
+	if err != nil {
+		panic(err)
+	}
+
+	pl := module.NewPacketLive(devices)
 	go pl.Live("eth0")
 
 	as := module.NewAutoSave(pl)
@@ -23,7 +30,7 @@ func main() {
 		fmt.Println("==== DEVICE TRAFFIC ====")
 		for _, d := range devices {
 			traffic := d.Traffic
-			trafficFormat := Util.toDataCast(float64(traffic))
+			trafficFormat := util.ToDataCast(float64(traffic))
 			fmt.Printf("%s : %s (%d b)\n", d.MacAddress, trafficFormat, traffic)
 		}
 	}

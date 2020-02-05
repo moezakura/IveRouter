@@ -22,9 +22,14 @@ const (
 	timeout      time.Duration = 30 * time.Second
 )
 
-func NewPacketLive() *PacketLive {
+func NewPacketLive(devices model.Devices) *PacketLive {
+	devicesSyncMap := sync.Map{}
+	for _, d := range devices {
+		devicesSyncMap.Store(d.MacAddress, d)
+	}
+
 	return &PacketLive{
-		devices: sync.Map{},
+		devices: devicesSyncMap,
 	}
 }
 

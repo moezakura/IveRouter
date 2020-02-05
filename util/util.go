@@ -1,8 +1,9 @@
-package main
+package util
 
-import "fmt"
-
-var Util = util{}
+import (
+	"fmt"
+	"os"
+)
 
 const (
 	B2KB = 1024
@@ -11,10 +12,7 @@ const (
 	GB   = B2KB * B2KB * B2KB
 )
 
-type util struct {
-}
-
-func (util) toDataCast(length float64) string {
+func ToDataCast(length float64) string {
 	s := ""
 	if length > KB {
 		if length > MB {
@@ -30,4 +28,9 @@ func (util) toDataCast(length float64) string {
 		s = fmt.Sprintf("%.0f b", length)
 	}
 	return s
+}
+
+func Exists(filename string) bool {
+	_, err := os.Stat(filename)
+	return err == nil
 }
