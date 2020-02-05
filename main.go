@@ -30,8 +30,8 @@ func main() {
 		fmt.Println("==== DEVICE TRAFFIC ====")
 
 		fmt.Printf("%17s : ", "MAC ADDRESS")
-		fmt.Printf("%32s   ", "DOWNLOAD")
-		fmt.Printf("%32s", "UPLOAD")
+		fmt.Printf("%13s%s%13s   ", "", "UPLOAD", "")
+		fmt.Printf("%12s%s%12s", "", "DOWNLOAD", "")
 		fmt.Println()
 
 		for _, d := range devices {

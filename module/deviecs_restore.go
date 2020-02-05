@@ -29,6 +29,6 @@ func (d *DevicesRestore) Restore() (devices model.Devices, err error) {
 		return nil, err
 	}
 
-	err = devices.Decode(b)
-	return devices, err
+	ds, err := devices.Decode(b)
+	return ds, err
 }

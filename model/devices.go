@@ -28,8 +28,9 @@ func (d Devices) Encode() (data []byte, err error) {
 	return buf.Bytes(), nil
 }
 
-func (d Devices) Decode(data []byte) error {
+func (d Devices) Decode(data []byte) (ds Devices, err error) {
+	ds = Devices{}
 	buf := bytes.NewBuffer(data)
-	err := gob.NewDecoder(buf).Decode(&d)
-	return err
+	err = gob.NewDecoder(buf).Decode(&ds)
+	return ds, err
 }
