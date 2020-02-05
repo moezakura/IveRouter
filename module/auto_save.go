@@ -1,6 +1,7 @@
 package module
 
 import (
+	"fmt"
 	"github.com/moezakura/IveRouter/model"
 	"log"
 	"os"
@@ -8,7 +9,7 @@ import (
 )
 
 const (
-	AUTO_SAVE_FILE = "devices.dat"
+	AUTO_SAVE_FILE = "devices_%s.dat"
 )
 
 type AutoSave struct {
@@ -40,7 +41,9 @@ func (a *AutoSave) do() {
 		return
 	}
 
-	file, err := os.Create(AUTO_SAVE_FILE)
+	now := time.Now()
+	filePath := fmt.Sprintf(AUTO_SAVE_FILE, now.Format("2006-01-02"))
+	file, err := os.Create(filePath)
 	if err != nil {
 		log.Printf("devices data save file create error: %+v\n", err)
 		return
