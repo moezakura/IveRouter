@@ -2,7 +2,7 @@ package module
 
 import (
 	"fmt"
-	"github.com/moezakura/IveRouter/model"
+	"github.com/moezakura/IveRouter/server/model"
 	"log"
 	"os"
 	"time"

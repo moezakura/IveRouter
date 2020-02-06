@@ -1,4 +1,4 @@
-module github.com/moezakura/IveRouter
+module github.com/moezakura/IveRouter/server
 
 go 1.13
 

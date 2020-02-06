@@ -2,8 +2,8 @@ package module
 
 import (
 	"fmt"
-	"github.com/moezakura/IveRouter/model"
-	"github.com/moezakura/IveRouter/util"
+	"github.com/moezakura/IveRouter/server/model"
+	"github.com/moezakura/IveRouter/server/util"
 	"io/ioutil"
 	"time"
 )

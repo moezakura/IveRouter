@@ -1,11 +1,11 @@
-package main
+package server
 
 import (
 	"bufio"
 	"fmt"
-	"github.com/moezakura/IveRouter/model"
-	"github.com/moezakura/IveRouter/module"
-	"github.com/moezakura/IveRouter/util"
+	"github.com/moezakura/IveRouter/server/model"
+	"github.com/moezakura/IveRouter/server/module"
+	"github.com/moezakura/IveRouter/server/util"
 	"os"
 	"sort"
 )

@@ -4,7 +4,7 @@ import (
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
-	"github.com/moezakura/IveRouter/model"
+	"github.com/moezakura/IveRouter/server/model"
 	"log"
 	"sync"
 	"time"
