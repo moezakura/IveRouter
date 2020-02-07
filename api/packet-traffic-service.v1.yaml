@@ -1,0 +1,228 @@
+openapi: 3.0.0
+info:
+  title: packet traffic service
+  version: '1.0'
+  contact:
+    name: '@__MOX__'
+    url: 'https://mox.si'
+    email: c38p8d@gmail.com
+  termsOfService: 'https://mox.si'
+  license:
+    name: MIT
+  description: IveRouterのメインサービスです。
+servers:
+  - url: 'http://localhost:3001'
+    description: dev
+paths:
+  /traffic/list:
+    get:
+      summary: Your GET endpoint
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+                  payload:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+              examples: {}
+          headers: {}
+      operationId: get-traffic-list
+      description: デバイスごとのトラフィック一覧を返します。
+      tags: []
+  '/traffic/{macAddress}':
+    parameters:
+      - schema:
+          type: string
+        name: macAddress
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+                  payload:
+                    type: object
+                    properties:
+                      dayly:
+                        $ref: '#/components/schemas/Traffic'
+                      weekly:
+                        $ref: '#/components/schemas/Traffic'
+                      monthly:
+                        $ref: '#/components/schemas/Traffic'
+            application/xml:
+              schema:
+                type: object
+                properties: {}
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+                  payload:
+                    $ref: '#/components/schemas/Device'
+      operationId: get-traffic-mac_address
+      description: 指定されたMACアドレスに関してトラフィック情報を返します。
+  /users/list:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+                  payload:
+                    $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+                  payload:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+      operationId: get-users
+      description: ユーザーリストを返します。
+    parameters: []
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+                  payload:
+                    $ref: '#/components/schemas/User'
+      operationId: get-users-user_id
+      description: 指定されたユーザーに関してユーザー情報を返します。
+  /auth/signin:
+    post:
+      summary: ''
+      operationId: post-auth-signin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                password:
+                  type: string
+        description: IDとパスワードを送信します。
+      description: 認証します。
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      properties:
+        ID:
+          type: number
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Device'
+        daily:
+          $ref: '#/components/schemas/Traffic'
+        weekly:
+          $ref: '#/components/schemas/Traffic'
+        monthly:
+          $ref: '#/components/schemas/Traffic'
+    Device:
+      title: Device
+      type: object
+      properties:
+        macAddress:
+          type: string
+        traffic:
+          $ref: '#/components/schemas/Traffic'
+    Traffic:
+      title: Traffic
+      type: object
+      properties:
+        download:
+          type: integer
+        upload:
+          type: integer
+  securitySchemes: {}
