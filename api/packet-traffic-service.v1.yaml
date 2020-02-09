@@ -14,9 +14,9 @@ servers:
   - url: 'http://localhost:3001'
     description: dev
 paths:
-  /traffic/list:
+  /traffic/:
     get:
-      summary: Your GET endpoint
+      summary: トラフィック一覧を取得
       responses:
         '200':
           description: OK
@@ -30,14 +30,37 @@ paths:
                   message:
                     type: string
                   payload:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/User'
+                    type: object
+                    properties:
+                      users:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/SimpleUser'
+                      traffics:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/DeviceWithDate'
+                required:
+                  - status
+                  - message
               examples: {}
           headers: {}
       operationId: get-traffic-list
       description: デバイスごとのトラフィック一覧を返します。
       tags: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: startDate
+          description: 機関指定の開始日。
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: endDate
+          description: 機関指定の終了日。
+          required: true
   '/traffic/{macAddress}':
     parameters:
       - schema:
@@ -46,7 +69,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: 指定したMACアドレスのトラフィックを取得
       tags: []
       responses:
         '200':
@@ -69,6 +92,9 @@ paths:
                         $ref: '#/components/schemas/Traffic'
                       monthly:
                         $ref: '#/components/schemas/Traffic'
+                required:
+                  - status
+                  - message
             application/xml:
               schema:
                 type: object
@@ -83,41 +109,8 @@ paths:
                     type: string
                   payload:
                     $ref: '#/components/schemas/Device'
-      operationId: get-traffic-mac_address
+      operationId: get-traffic-from-mac_address
       description: 指定されたMACアドレスに関してトラフィック情報を返します。
-  /users/list:
-    get:
-      summary: Your GET endpoint
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: number
-                  message:
-                    type: string
-                  payload:
-                    $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: number
-                  message:
-                    type: string
-                  payload:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/User'
-      operationId: get-users
-      description: ユーザーリストを返します。
-    parameters: []
   '/users/{userId}':
     parameters:
       - schema:
@@ -126,7 +119,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
+      summary: 指定したユーザーを取得
       tags: []
       responses:
         '200':
@@ -142,12 +135,14 @@ paths:
                     type: string
                   payload:
                     $ref: '#/components/schemas/User'
-      operationId: get-users-user_id
+                required:
+                  - status
+                  - message
+      operationId: get-user-from-user_id
       description: 指定されたユーザーに関してユーザー情報を返します。
-  /auth/signin:
     post:
-      summary: ''
-      operationId: post-auth-signin
+      summary: 指定したユーザーを更新
+      operationId: change-user-from-user_id
       responses:
         '200':
           description: OK
@@ -160,6 +155,53 @@ paths:
                     type: number
                   message:
                     type: string
+                  payload:
+                    type: string
+                required:
+                  - status
+                  - message
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+      description: 指定されたユーザーに関してユーザー情報を変更します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  $ref: '#/components/schemas/User'
+              required:
+                - user
+        description: ユーザー名・各種RateLimit以外の項目は無視されます。
+  /auth/signin:
+    post:
+      summary: サインイン
+      operationId: signin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
             application/xml:
               schema:
                 type: object
@@ -189,8 +231,165 @@ paths:
                   type: string
                 password:
                   type: string
+              required:
+                - id
+                - password
         description: IDとパスワードを送信します。
       description: 認証します。
+  '/traffic/users/{userId}':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: 指定したユーザーのトラフィックを取得
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+                  payload:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/SimpleUser'
+                      traffics:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/TrafficWithDate'
+                required:
+                  - status
+                  - message
+              examples: {}
+          headers: {}
+      operationId: get-traffic-from-users-user_id
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: startDate
+          description: 機関指定の開始日。
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: endDate
+          description: 機関指定の終了日。
+          required: true
+      description: ユーザーごとのトラフィックを返します。
+  '/users/{userId}/devices':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+    put:
+      summary: 指定したユーザーにデバイスを登録
+      operationId: append-device-mac-to-user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                device:
+                  $ref: '#/components/schemas/Device'
+              required:
+                - device
+        description: デバイスのMACアドレス以外の項目は無視されます。
+      description: 指定したユーザーに関してデバイスを紐づけます。
+  /users/:
+    put:
+      summary: ユーザーを作成
+      operationId: create-user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+                required:
+                  - status
+                  - message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  $ref: '#/components/schemas/SimpleUser'
+              required:
+                - user
+      description: 新しくユーザーを作成します。
+      parameters: []
+    parameters: []
+    get:
+      summary: ユーザー一覧を取得
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+                  payload:
+                    $ref: '#/components/schemas/User'
+                required:
+                  - status
+                  - message
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                  message:
+                    type: string
+                  payload:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+      operationId: get-users-list
+      description: ユーザーリストを返します。
 components:
   schemas:
     User:
@@ -198,17 +397,26 @@ components:
       type: object
       properties:
         ID:
-          type: number
+          type: string
         devices:
           type: array
           items:
             $ref: '#/components/schemas/Device'
         daily:
-          $ref: '#/components/schemas/Traffic'
+          $ref: '#/components/schemas/LimitTraffic'
         weekly:
-          $ref: '#/components/schemas/Traffic'
+          $ref: '#/components/schemas/LimitTraffic'
         monthly:
-          $ref: '#/components/schemas/Traffic'
+          $ref: '#/components/schemas/LimitTraffic'
+        name:
+          type: string
+      required:
+        - ID
+        - devices
+        - daily
+        - weekly
+        - monthly
+        - name
     Device:
       title: Device
       type: object
@@ -217,6 +425,8 @@ components:
           type: string
         traffic:
           $ref: '#/components/schemas/Traffic'
+      required:
+        - macAddress
     Traffic:
       title: Traffic
       type: object
@@ -225,4 +435,54 @@ components:
           type: integer
         upload:
           type: integer
+      required:
+        - download
+        - upload
+    TrafficWithDate:
+      title: TrafficWithDate
+      type: object
+      properties:
+        date:
+          type: string
+        traffic:
+          $ref: '#/components/schemas/Traffic'
+      required:
+        - date
+        - traffic
+    DeviceWithDate:
+      title: DeviceWithDate
+      type: object
+      properties:
+        date:
+          type: string
+        device:
+          $ref: '#/components/schemas/Device'
+      required:
+        - date
+        - device
+    SimpleUser:
+      title: SimpleUser
+      type: object
+      properties:
+        ID:
+          type: string
+        name:
+          type: string
+      required:
+        - ID
+        - name
+    LimitTraffic:
+      title: LimitTraffic
+      type: object
+      properties:
+        traffic:
+          $ref: '#/components/schemas/Traffic'
+        count:
+          type: integer
+        limit:
+          type: integer
+      required:
+        - traffic
+        - count
+        - limit
   securitySchemes: {}
